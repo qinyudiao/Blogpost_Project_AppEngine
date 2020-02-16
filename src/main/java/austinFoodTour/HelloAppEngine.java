@@ -1,4 +1,4 @@
-package guestbook;
+package austinFoodTour;
 
 import java.io.IOException;
 

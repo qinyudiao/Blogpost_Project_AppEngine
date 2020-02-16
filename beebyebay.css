@@ -1,0 +1,18 @@
+body {
+  background-color: lightblue;
+}
+
+h1 {
+  color: #292065;
+  text-align: center;
+}
+
+p {
+  font-family: verdana;
+  font-size: 18px;
+}
+
+#table1 {
+    font-size: 30px;
+    border: 1px solid rosybrown;
+}

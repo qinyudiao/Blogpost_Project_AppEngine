@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+<title> Arbitrary JavaScript </title>
+</head>
+
+<body>
+<input type="text" id="text1">
+
+<button type="button" onclick="hide()">Hide</button>
+<button type="button" onclick="show()">Show</button>
+<button type="button" onclick="format()">Format</button>
+<button type="button" onclick="reset()">Reset</button>
+
+<script>
+
+function hide() {
+  document.getElementById("text1").style.visibility = "hidden";
+}
+function show() {
+  document.getElementById("text1").style.visibility = "visible";
+}
+function format() {
+  document.getElementById("text1").style.backgroundColor = "green";
+  document.getElementById("text1").style.color = "red";
+  document.getElementById("text1").style.fontSize = "20px";
+  document.getElementById("text1").style.textAlign= "center";
+}
+function reset() {
+  document.getElementById("text1").style.backgroundColor = "white";
+  document.getElementById("text1").style.color = "black";
+  document.getElementById("text1").style.fontSize = "14px";
+  document.getElementById("text1").style.textAlign= "left";
+}
+
+</script>
+</body>
+</html>

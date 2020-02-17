@@ -1,5 +1,5 @@
 [
+  "appengine-api",
   "appengine-endpoints",
-  "objectify",
-  "appengine-api"
+  "objectify"
 ]

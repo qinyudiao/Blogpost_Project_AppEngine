@@ -33,27 +33,19 @@
 		</style>
 	</head>
   <body>
-  
 <%
-
     String bloggerName = request.getParameter("bloggerName");
 
     if (bloggerName == null) {
-
-        bloggerName = "default";
-
+        bloggerName = "austinfoodtour";
     }
 
     pageContext.setAttribute("bloggerName", bloggerName);
-
     UserService userService = UserServiceFactory.getUserService();
-
     User user = userService.getCurrentUser();
 
     if (user != null) {
-
       pageContext.setAttribute("user", user);
-
 %>
 <p>Hello, ${fn:escapeXml(user.nickname)}! (You can
 <a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
@@ -68,12 +60,12 @@ to post your blog.</p>
 %>
 <%
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Key blogKey = KeyFactory.createKey("Blogpost", bloggerName);
+    Key blogKey = KeyFactory.createKey("Blog", bloggerName);
 
     // Run an ancestor query to ensure we see the most up-to-date
     // view of the Greetings belonging to the selected Guestbook.
 
-    Query query = new Query("Blogpost", blogKey).addSort("date", Query.SortDirection.DESCENDING);
+    Query query = new Query("Thread", blogKey).addSort("date", Query.SortDirection.DESCENDING);
     List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(5));
 
     if (posts.isEmpty()) {
@@ -86,11 +78,8 @@ to post your blog.</p>
         <p>Posts in Blog '${fn:escapeXml(bloggerName)}'.</p>
         <%
         for (Entity post : posts) {
-            pageContext.setAttribute("post_content",
-                                     post.getProperty("content"));
-            pageContext.setAttribute("post_title",
-
-                    post.getProperty("title"));
+            pageContext.setAttribute("post_content", post.getProperty("content"));
+            pageContext.setAttribute("post_title", post.getProperty("title"));
 
             if (post.getProperty("user") == null) {
                 %>
@@ -108,7 +97,6 @@ to post your blog.</p>
         }
     }
 %>
-
 		<form action="/post" method="post">
 			<div><textarea name="title" rows="1" cols="40"></textarea></div>
 			<div><textarea name="content" rows="3" cols="60"></textarea></div>
@@ -120,15 +108,16 @@ to post your blog.</p>
 		<p id="p1">This is a paragraph.</p>
 		<p>This is another paragraph.</p>
 		<p> Visit <a id="link1" href="https://www.nfl.com">NFL</a> </p>
+		
 		<table>
 		      <tr>
 		        <td colspan="2" style="font-weight:bold;">Available Servlets:</td>        
 		      </tr>
 		      <tr>
-		        <td><a href='/austinFoodTour'>The servlet</a></td>
+		        <td><a href='/austinfoodtour'>The servlet</a></td>
 		      </tr>
 		</table>
-
+		
 		<img src="taco1.png" alt="Taco" width="791" height="530">
 
   </body>

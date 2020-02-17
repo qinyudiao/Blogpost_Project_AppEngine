@@ -31,13 +31,13 @@ public class WriteBlogpostServlet extends HttpServlet {
         // Guestbook should be limited to ~1/second.
 
         String bloggerName = req.getParameter("bloggerName");
-        Key blogKey = KeyFactory.createKey("Blogpost", bloggerName);
+        Key blogKey = KeyFactory.createKey("Blog", bloggerName);
         
         String title = req.getParameter("title");
         String content = req.getParameter("content");
 
         Date date = new Date();
-        Entity post = new Entity("Post", blogKey);
+        Entity post = new Entity("Thread", blogKey);
 
         post.setProperty("user", user);
         post.setProperty("date", date);

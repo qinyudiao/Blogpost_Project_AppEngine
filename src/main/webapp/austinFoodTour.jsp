@@ -1,19 +1,18 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <%@ page import="java.util.List" %>
-
 <%@ page import="com.google.appengine.api.users.User" %>
-
 <%@ page import="com.google.appengine.api.users.UserService" %>
-
 <%@ page import="com.google.appengine.api.users.UserServiceFactory" %>
-
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
- 
+<%@ page import="com.google.appengine.api.datastore.DatastoreServiceFactory" %>
+<%@ page import="com.google.appengine.api.datastore.DatastoreService" %>
+<%@ page import="com.google.appengine.api.datastore.Query" %>
+<%@ page import="com.google.appengine.api.datastore.Entity" %>
+<%@ page import="com.google.appengine.api.datastore.FetchOptions" %>
+<%@ page import="com.google.appengine.api.datastore.Key" %>
+<%@ page import="com.google.appengine.api.datastore.KeyFactory" %>
 
 <html>
-	
 	<head>
 		<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 		<title> Austin Food Tours </title>
@@ -33,13 +32,19 @@
 		  }
 		</style>
 	</head>
- 
-
   <body>
-
- 
-
+  
 <%
+
+    String bloggerName = request.getParameter("bloggerName");
+
+    if (bloggerName == null) {
+
+        bloggerName = "default";
+
+    }
+
+    pageContext.setAttribute("bloggerName", bloggerName);
 
     UserService userService = UserServiceFactory.getUserService();
 
@@ -50,30 +55,68 @@
       pageContext.setAttribute("user", user);
 
 %>
-
 <p>Hello, ${fn:escapeXml(user.nickname)}! (You can
-
 <a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
-
 <%
+    } else {
+%>
+<p>Hello!
+<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Sign in</a>
+to post your blog.</p>
+<%
+    }
+%>
+<%
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Key blogKey = KeyFactory.createKey("Blogpost", bloggerName);
+
+    // Run an ancestor query to ensure we see the most up-to-date
+    // view of the Greetings belonging to the selected Guestbook.
+
+    Query query = new Query("Blogpost", blogKey).addSort("date", Query.SortDirection.DESCENDING);
+    List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(5));
+
+    if (posts.isEmpty()) {
+        %>
+        <p>Blog '${fn:escapeXml(bloggerName)}' has no posts.</p>
+        <%
 
     } else {
+        %>
+        <p>Posts in Blog '${fn:escapeXml(bloggerName)}'.</p>
+        <%
+        for (Entity post : posts) {
+            pageContext.setAttribute("post_content",
+                                     post.getProperty("content"));
+            pageContext.setAttribute("post_title",
 
-%>
+                    post.getProperty("title"));
 
-<p>Hello!
-
-<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Sign in</a>
-
-to include your name with greetings you post.</p>
-
-<%
-
+            if (post.getProperty("user") == null) {
+                %>
+                <p>Sign in to post:</p>
+                <%
+            } else {
+                pageContext.setAttribute("post_user", post.getProperty("user"));
+                %>
+                <p><b>${fn:escapeXml(post_user.nickname)}</b> wrote:</p>
+                <%
+            }
+            %>
+            <blockquote>${fn:escapeXml(post_content)}</blockquote>
+            <%
+        }
     }
-
 %>
 
- 		<h1> Austin Food Tour </h1>
+		<form action="/post" method="post">
+			<div><textarea name="title" rows="1" cols="40"></textarea></div>
+			<div><textarea name="content" rows="3" cols="60"></textarea></div>
+			<div><input type="submit" value="Post" /></div>
+			<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
+		</form>
+
+  		<h1> Austin Food Tour </h1>
 		<p id="p1">This is a paragraph.</p>
 		<p>This is another paragraph.</p>
 		<p> Visit <a id="link1" href="https://www.nfl.com">NFL</a> </p>
@@ -87,12 +130,8 @@ to include your name with greetings you post.</p>
 		</table>
 
 		<img src="taco1.png" alt="Taco" width="791" height="530">
-		
-	 <form action="/post" method="post">
-	   <div><textarea name="content" rows="3" cols="60"></textarea></div>
-	   <div><input type="submit" value="Post" ></div>
-	 </form>
 
   </body>
 
 </html>
+

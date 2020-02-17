@@ -1,10 +1,14 @@
 package austinFoodTour;
 
-import java.io.IOException;
+import com.google.appengine.api.datastore.DatastoreService;
 
-import java.util.logging.Logger;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 
-import javax.servlet.http.*;
+import com.google.appengine.api.datastore.Entity;
+
+import com.google.appengine.api.datastore.Key;
+
+import com.google.appengine.api.datastore.KeyFactory;
 
 import com.google.appengine.api.users.User;
 
@@ -14,15 +18,23 @@ import com.google.appengine.api.users.UserServiceFactory;
 
  
 
-public class WriteBlogpostServlet extends HttpServlet {
+import java.io.IOException;
 
-    private static final Logger log = Logger.getLogger(WriteBlogpostServlet.class.getName());
+import java.util.Date;
 
  
 
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+import javax.servlet.http.HttpServlet;
 
-                throws IOException {
+import javax.servlet.http.HttpServletRequest;
+
+import javax.servlet.http.HttpServletResponse;
+
+ 
+
+public class WriteBlogpostServlet extends HttpServlet {
+
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
         UserService userService = UserServiceFactory.getUserService();
 
@@ -30,25 +42,45 @@ public class WriteBlogpostServlet extends HttpServlet {
 
  
 
+        // We have one entity group per Guestbook with all Greetings residing
+
+        // in the same entity group as the Guestbook to which they belong.
+
+        // This lets us run a transactional ancestor query to retrieve all
+
+        // Greetings for a given Guestbook.  However, the write rate to each
+
+        // Guestbook should be limited to ~1/second.
+
+        String bloggerName = req.getParameter("bloggerName");
+
+        Key blogKey = KeyFactory.createKey("Blogpost", bloggerName);
+        
+        String title = req.getParameter("title");
+
         String content = req.getParameter("content");
 
-        if (content == null) {
+        Date date = new Date();
 
-            content = "(No greeting)";
+        Entity post = new Entity("Post", blogKey);
 
-        }
+        post.setProperty("user", user);
 
-        if (user != null) {
+        post.setProperty("date", date);
 
-            log.info("Greeting posted by user " + user.getNickname() + ": " + content);
+        post.setProperty("content", content);
+        
+        post.setProperty("title", title);
 
-        } else {
+ 
 
-            log.info("Greeting posted anonymously: " + content);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        }
+        datastore.put(post);
 
-        resp.sendRedirect("/austinFoodTour.jsp");
+ 
+
+        resp.sendRedirect("/austinFoodTour.jsp?bloggerName=" + bloggerName);
 
     }
 

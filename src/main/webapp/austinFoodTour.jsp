@@ -20,6 +20,15 @@
 		  #p1{
 		    color : #21ae08;
 		  }
+		  div.left50{
+		  	position: absolute;
+		  	left : 50px;
+		  }
+		  div.left40top30{
+		  	position: relative;
+		  	left : 40px;
+		  	top : 30px;
+		  }
 		</style>
 	</head>
   <body>
@@ -30,7 +39,7 @@
     String bloggerName = request.getParameter("bloggerName");
 
     if (bloggerName == null) {
-        bloggerName = "austinfoodtour";
+        bloggerName = "Austin Food Tour";
     }
 
     pageContext.setAttribute("bloggerName", bloggerName);
@@ -63,19 +72,25 @@ to post your blog.</p>
 		  var txt;
 		  var emailAddress = prompt("You will receive an email at 5pm central time everyday" + 
 				  "\nif there are any new posts in the past 24 hours" +
-				  "\nPlease enter your email address to subcribe:", "address@example.com");
+				  "\nPlease enter your email address to subcribe:", "name@example.com");
 		  if (emailAddress == null || emailAddress == "") {
 			  
 		  } else {
-		    txt = "Welcome, " + emailAddress + "! Your are subscribed";
+		    txt = "Your are subscribed!";
 		    document.getElementById("sub").innerHTML = txt;
 		  }
 		}
 	</script>
 	<script>
 		function popUpEmailUnsubPrompt() {
-		  var txt;
+		  var txt = "Your are subscribed!";
 		  var emailAddress = prompt("Please enter your email address to unsubscribe:", "address@example.com");
+		  if (emailAddress == null || emailAddress == "") {
+
+		  } else {
+		    txt = "Your successful unsubscribed if you entered the correct email address.";
+		  }
+		  document.getElementById("sub").innerHTML = txt;
 		}
 	</script>
 			
@@ -103,11 +118,10 @@ to post your blog.</p>
         for (Entity post : posts) {
             pageContext.setAttribute("post_content", post.getProperty("content"));
             pageContext.setAttribute("post_title", post.getProperty("title"));
+            pageContext.setAttribute("post_date", post.getProperty("date"));
 
             if (post.getProperty("user") == null) {
-                %>
-                <p>Sign in to post:</p>
-                <%
+
             } else {
                 pageContext.setAttribute("post_user", post.getProperty("user"));
                 %>
@@ -124,17 +138,20 @@ to post your blog.</p>
         }
     }
 %>
-
-		<form action="/post" method="post">
-			<div><textarea name="title" rows="1" cols="40"></textarea></div>
-			<div><textarea name="content" rows="3" cols="60"></textarea></div>
-			<div><input type="submit" value="Post" /></div>
-			<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
-		</form>
-
-		<a href="austinFoodTourAll.jsp">Display All Posts</a>
-
-
+	<div class="left50"> 
+		<a href="austinFoodTourAll.jsp">Display all</a>
+	</div>
+	<%if (user != null) { %>
+		<div class="left40top30"">
+			<form action="/post" method="post">
+				<div><textarea name="title" rows="1" cols="40"></textarea></div>
+				<div><textarea name="content" rows="3" cols="60"></textarea></div>
+				<div><input type="submit" value="Post" /></div>
+				<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
+			</form>
+		</div>
+	<%} %>
+		
 
   </body>
 

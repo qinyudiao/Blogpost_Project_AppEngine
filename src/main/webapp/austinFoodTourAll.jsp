@@ -20,21 +20,12 @@
 		  #p1{
 		    color : #21ae08;
 		  }
-		  #row0{
-		    color : #498ef8;
-		  }
-		  #row1{
-		    color : #972e2a;
-		  }
-		  #row2{
-		    color : #b19158;
-		  }
 		</style>
 	</head>
   <body>
   
   <img src="AustinFoodTour_title.jpeg" alt="Title" width="100%">  
-	
+
 <%
     String bloggerName = request.getParameter("bloggerName");
 
@@ -60,6 +51,33 @@ to post your blog.</p>
 <%
     }
 %>
+
+	<div>
+		<button onclick="popUpEmailSubPrompt()">Subscribe</button>
+		<button onclick="popUpEmailUnsubPrompt()">Unsubscribe</button>
+		<p id="sub"></p>
+	</div>
+	
+	<script>
+		function popUpEmailSubPrompt() {
+		  var txt;
+		  var emailAddress = prompt("You will receive an email at 5pm central time everyday" + 
+				  "\nif there are any new posts in the past 24 hours" +
+				  "\nPlease enter your email address to subcribe:", "address@example.com");
+		  if (emailAddress == null || emailAddress == "") {
+			  
+		  } else {
+		    txt = "Welcome, " + emailAddress + "! Your are subscribed";
+		    document.getElementById("sub").innerHTML = txt;
+		  }
+		}
+	</script>
+	<script>
+		function popUpEmailUnsubPrompt() {
+		  var txt;
+		  var emailAddress = prompt("Please enter your email address to unsubscribe:", "address@example.com");
+		}
+	</script>
 		
 		<img src="taco1.png" alt="Taco" width="300" height="200" align="middle">  
 

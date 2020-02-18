@@ -79,16 +79,11 @@ to post your blog.</p>
 		}
 	</script>
 		
-		<img src="taco1.png" alt="Taco" width="300" height="200" align="middle">  
+		<p style="text-align:center;"><img src="taco1.png" alt="Taco" width="300" height="200" align="middle"></p>
 
 <%
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Key blogKey = KeyFactory.createKey("Blog", bloggerName);
-    
-    // Variable to keep track of number of posts
-    int totalPosts = 0;
-    int x = 5;
-    boolean displayAll = false;
 
     // Run an ancestor query to ensure we see the most up-to-date
     // view of the Greetings belonging to the selected Guestbook.
@@ -115,17 +110,17 @@ to post your blog.</p>
                 <%
             } else {
                 pageContext.setAttribute("post_user", post.getProperty("user"));
-                totalPosts++;
                 %>
                 <h2 style='text-align: center; font-style: italic;
                 font-weight: 600; font-family: sans-serif'>${fn:escapeXml(post_title)}</h2>
                 <p style='text-align: center;'><b>Written by ${fn:escapeXml(post_user.nickname)} on 
                 ${fn:escapeXml(post_date)}</b></p>
                 <%
+                %>
+                <blockquote style="border:3px; border-style:solid; border-color:black; padding: 1em;"
+                >${fn:escapeXml(post_content)}</blockquote>
+                <%
             }
-            %>
-            <blockquote>${fn:escapeXml(post_content)}</blockquote>
-            <%
         }
     }
 %>

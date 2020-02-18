@@ -33,6 +33,8 @@
 		</style>
 	</head>
   <body>
+  
+	
 <%
     String bloggerName = request.getParameter("bloggerName");
 
@@ -58,6 +60,24 @@ to post your blog.</p>
 <%
     }
 %>
+
+<h1> Austin Food Tour </h1>
+		<p id="p1">This is a paragraph.</p>
+		<p>This is another paragraph.</p>
+		<p> Visit <a id="link1" href="https://www.nfl.com">NFL</a> </p>
+		
+		<table>
+		      <tr>
+		        <td colspan="2" style="font-weight:bold;">Available Servlets:</td>        
+		      </tr>
+		      <tr>
+		        <td><a href='/austinfoodtour'>The servlet</a></td>
+		      </tr>
+		</table>
+		
+		<img src="taco1.png" alt="Taco" width="791" height="530">  
+ 
+
 <%
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Key blogKey = KeyFactory.createKey("Blog", bloggerName);
@@ -88,7 +108,10 @@ to post your blog.</p>
             } else {
                 pageContext.setAttribute("post_user", post.getProperty("user"));
                 %>
-                <p><b>${fn:escapeXml(post_user.nickname)}</b> wrote:</p>
+                <h2 style='text-align: center; font-style: italic;
+                font-weight: 600; font-family: sans-serif'>${fn:escapeXml(post_title)}</h2>
+                <p style='text-align: center;'><b>Written by ${fn:escapeXml(post_user.nickname)} on 
+                ${fn:escapeXml(post_date)}</b></p>
                 <%
             }
             %>
@@ -103,22 +126,6 @@ to post your blog.</p>
 			<div><input type="submit" value="Post" /></div>
 			<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
 		</form>
-
-  		<h1> Austin Food Tour </h1>
-		<p id="p1">This is a paragraph.</p>
-		<p>This is another paragraph.</p>
-		<p> Visit <a id="link1" href="https://www.nfl.com">NFL</a> </p>
-		
-		<table>
-		      <tr>
-		        <td colspan="2" style="font-weight:bold;">Available Servlets:</td>        
-		      </tr>
-		      <tr>
-		        <td><a href='/austinfoodtour'>The servlet</a></td>
-		      </tr>
-		</table>
-		
-		<img src="taco1.png" alt="Taco" width="791" height="530">
 
   </body>
 

@@ -76,7 +76,7 @@ to post your blog.</p>
     // view of the Greetings belonging to the selected Guestbook.
 
     Query query = new Query("Thread", blogKey).addSort("date", Query.SortDirection.DESCENDING);
-    List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(5));
+    List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
 
     if (posts.isEmpty()) {
         %>
@@ -119,11 +119,8 @@ to post your blog.</p>
 			<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
 		</form>
 
-		<a href="displayAll.jsp">Display All Posts</a>
-
-
+		<a href="austinFoodTour.jsp">Show Less</a>
 
   </body>
 
 </html>
-

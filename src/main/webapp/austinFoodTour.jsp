@@ -37,6 +37,7 @@
 	
 <%
     String bloggerName = request.getParameter("bloggerName");
+	
 
     if (bloggerName == null) {
         bloggerName = "Austin Food Tour";
@@ -45,18 +46,22 @@
     pageContext.setAttribute("bloggerName", bloggerName);
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
-
+	String emailAddr = "test@example.com";
+	String emailToSub = "";
+	String emailToUnSub = "";
+    
     if (user != null) {
       pageContext.setAttribute("user", user);
+      emailAddr = user.getEmail();
 %>
-<p>Hello, ${fn:escapeXml(user.nickname)}! (You can
-<a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
+		<p>Hello, ${fn:escapeXml(user.nickname)}! (You can 
+		<a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
 <%
     } else {
 %>
-<p>Hello!
-<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Sign in</a>
-to post your blog.</p>
+		<p>Hello!
+		<a href="<%= userService.createLoginURL(request.getRequestURI()) %>">Sign in</a>
+		to post your blog.</p>
 <%
     }
 %>
@@ -69,43 +74,82 @@ to post your blog.</p>
 	
 	<script>
 		function popUpEmailSubPrompt() {
-		  var txt;
+		  var txt = "Please enter your email address again!";
+		  var emailAddr = "test@example.com";
 		  var emailAddress = prompt("You will receive an email at 5pm central time everyday" + 
 				  "\nif there are any new posts in the past 24 hours" +
-				  "\nPlease enter your email address to subcribe:", "name@example.com");
+				  "\nPlease enter your email address to subcribe:", emailAddr);
 		  if (emailAddress == null || emailAddress == "") {
-			  
+
 		  } else {
-		    txt = "Your are subscribed!";
-		    document.getElementById("sub").innerHTML = txt;
+		    txt = emailAddress + " is subscribed!";
+		    emailToSub = emailAddress;
+		    pageContext.setAttribute("emailToSub", emailToSub);
 		  }
+		  document.getElementById("sub").innerHTML = txt;
+		  window.location.replace("austinFoodTourAll.jsp");
 		}
 	</script>
 	<script>
 		function popUpEmailUnsubPrompt() {
-		  var txt = "Your are subscribed!";
-		  var emailAddress = prompt("Please enter your email address to unsubscribe:", "address@example.com");
+		  var txt = "Please enter your email address again!";
+		  var emailAddress = prompt("Please enter your email address to unsubscribe:", emailAddr);
 		  if (emailAddress == null || emailAddress == "") {
 
 		  } else {
-		    txt = "Your successful unsubscribed if you entered the correct email address.";
+		    txt = "You are successfully unsubscribed if you entered the correct email address.";
+		    emailToUnSub = emailAddress;
+		    pageContext.setAttribute("emailToUnSub",  emailToUnSub);
 		  }
 		  document.getElementById("sub").innerHTML = txt;
+		  location.reload();
 		}
 	</script>
+	
+	<% 
+	if (emailToSub != "" && emailToSub != null) {
 			
-		<p style="text-align:center;"><img src="taco1.png" alt="Taco" width="300" height="200" alt="centered image"></p> 
+	%>
+		    <div>
+				<form action="/send" method="post">
+					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailToSub)}"/>
+					<input type="hidden" name="purpose" value="toSub"/>
+				</form>
+			</div>
+	<%
+		emailToSub = "";
+	}
+	%>
+	
+		<% 
+	if (emailToUnSub != "" && emailToUnSub != null) {
+			
+	%>
+		    <div>
+				<form action="/send" method="post">
+					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailToUnSub)}"/>
+					<input type="hidden" name="purpose" value="toUnSub"/>
+				</form>
+			</div>
+	<%
+		emailToUnSub = "";
+	}
+	%>
+	<form action="/send" method="get">
+			<input type="submit" value="Send"></input>
+	</form> 
+	<p style="text-align:center;"><img src="taco1.png" alt="Taco" width="300" height="200" alt="centered image"></p> 
 
 <%
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Key blogKey = KeyFactory.createKey("Blog", bloggerName);
-
+    
     // Run an ancestor query to ensure we see the most up-to-date
     // view of the Greetings belonging to the selected Guestbook.
-
     Query query = new Query("Thread", blogKey).addSort("date", Query.SortDirection.DESCENDING);
     List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(5));
 
+    
     if (posts.isEmpty()) {
         %>
         <p>Blog '${fn:escapeXml(bloggerName)}' has no posts.</p>
@@ -142,10 +186,12 @@ to post your blog.</p>
 		<a href="austinFoodTourAll.jsp">Display all</a>
 	</div>
 	<%if (user != null) { %>
-		<div class="left40top30"">
+		<div class="left40top30">
 			<form action="/post" method="post">
-				<div><textarea name="title" rows="1" cols="40"></textarea></div>
-				<div><textarea name="content" rows="3" cols="60"></textarea></div>
+				<label for="fname"> Title</label><br>
+				<div><textarea name="title" rows="1" cols="80"></textarea></div>
+				<p style="font-size:10px"> Content</p>
+				<div><textarea name="content" rows="4" cols="80"></textarea></div>
 				<div><input type="submit" value="Post" /></div>
 				<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
 			</form>

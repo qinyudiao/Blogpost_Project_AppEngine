@@ -1,6 +1,7 @@
 
 cron:
 - description: Every day at 5pm Central Time, send email to subscriber if there is any new post.
-  url: /cron
+  url: /send
   schedule: every day 17:00
   timezone: America/Chicago
+  

@@ -67,9 +67,9 @@
 <%
     }
 %>
-	<p style="font-size:12px">If you want to subscribe, please make sure to log in with your google account first. 
-								\nIf you subscribe, we'll send you an email to your gmail address at 5pm central time everday, 
-								\nif there were new posts in the past 24 hours.</p> 
+	<p style="font-size:12px">If you want to subscribe, please make sure to log in with your google account first. <p>
+	<p style="font-size:12px">If you subscribe, we'll send you an email to your gmail address at 5pm central time everday, <p>
+	<p style="font-size:12px">if there were new posts in the past 24 hours.</p> 
 		    <div>
 				<form action="/send" method="post">
 					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailAddr)}"/>

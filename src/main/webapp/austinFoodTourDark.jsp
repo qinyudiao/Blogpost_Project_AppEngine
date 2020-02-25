@@ -15,8 +15,11 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-		<link rel="stylesheet" href="beebyebay.css">
+		<link rel="stylesheet" href="darkmode.css">
 		<style>
+		  #p1{
+		    color : #21ae08;
+		  }
 		  div.left50{
 		  	position: absolute;
 		  	left : 50px;
@@ -32,7 +35,7 @@
   
   <img src="AustinFoodTour_title.jpeg" alt="Title" width="100%">
 	<div class="align-right"> 
-		<a href="austinFoodTourAllDark.jsp">Dark Mode</a>
+		<a href="austinFoodTour.jsp">Light Mode</a>
 	</div>
 <%
     String bloggerName = request.getParameter("bloggerName");
@@ -81,10 +84,10 @@
 				</form>
 			</div>
 			
-
 <!--  	<form action="/send" method="get">
 			<input type="submit" value="Send"></input>
 	</form> -->
+	
 	<p style="text-align:center;"><img src="taco1.png" alt="Taco" width="300" height="200" alt="centered image"></p> 
 
 <%
@@ -94,7 +97,7 @@
     // Run an ancestor query to ensure we see the most up-to-date
     // view of the Greetings belonging to the selected Guestbook.
     Query query = new Query("Thread", blogKey).addSort("date", Query.SortDirection.DESCENDING);
-    List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
+    List<Entity> posts = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(5));
 
     
     if (posts.isEmpty()) {
@@ -110,19 +113,20 @@
             pageContext.setAttribute("post_content", post.getProperty("content"));
             pageContext.setAttribute("post_title", post.getProperty("title"));
             pageContext.setAttribute("post_date", post.getProperty("date"));
+            pageContext.setAttribute("post_picture", post.getProperty("picture"));
 
             if (post.getProperty("user") == null) {
 
             } else {
                 pageContext.setAttribute("post_user", post.getProperty("user"));
                 %>
-                <h2 style='text-align: center; font-style: italic;
+                <h2 style='text-align: center; color: white; font-style: italic;
                 font-weight: 600; font-family: sans-serif'>${fn:escapeXml(post_title)}</h2>
                 <p style='text-align: center;'><b>Written by ${fn:escapeXml(post_user.nickname)} on 
                 ${fn:escapeXml(post_date)}</b></p>
                 <%
                 %>
-                <blockquote style="border:3px; border-style:solid; border-color:black; padding: 1em;"
+                <blockquote style="border:3px; color: white; border-style:solid; border-color:white; padding: 1em;"
                 >${fn:escapeXml(post_content)}</blockquote>
                 <%
             }
@@ -130,7 +134,7 @@
     }
 %>
 	<div class="left50"> 
-		<a href="austinFoodTour.jsp">Show less</a>
+		<a href="austinFoodTourAllDark.jsp">Display all</a>
 	</div>
 	<%if (user != null) { %>
 		<div class="left40top30">
@@ -141,7 +145,7 @@
 				<div><textarea name="content" rows="4" cols="80"></textarea></div>
 				<div><input type="submit" value="Post" /></div>
 				<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
-				<input type="hidden" name="pageName" value="austinFoodTourAll.jsp"/>
+				<input type="hidden" name="pageName" value="austinFoodTourDark.jsp"/>
 			</form>
 		</div>
 	<%} %>
@@ -150,3 +154,4 @@
   </body>
 
 </html>
+

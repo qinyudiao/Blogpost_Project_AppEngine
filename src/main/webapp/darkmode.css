@@ -1,0 +1,31 @@
+body {
+  	background-color: #081B33;
+}
+
+h1 {
+	color: white;
+  	text-align: center;
+}
+
+h2 {
+	color: white;
+}
+
+label {
+	color: white;
+}
+p {
+  	font-family: verdana;
+  	font-size: 18px;
+  	color: white;
+}
+
+#table1 {
+    font-size: 30px;
+    border: 1px solid rosybrown;
+}
+
+.align-right {
+	position: relative;
+  	float: right;
+}

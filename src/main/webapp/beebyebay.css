@@ -16,3 +16,8 @@ p {
     font-size: 30px;
     border: 1px solid rosybrown;
 }
+
+.align-right {
+	position: relative;
+  	float: right;
+}

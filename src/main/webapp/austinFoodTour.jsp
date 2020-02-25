@@ -17,9 +17,6 @@
 		<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 		<link rel="stylesheet" href="beebyebay.css">
 		<style>
-		  #p1{
-		    color : #21ae08;
-		  }
 		  div.left50{
 		  	position: absolute;
 		  	left : 50px;
@@ -33,11 +30,13 @@
 	</head>
   <body>
   
+  
   <img src="AustinFoodTour_title.jpeg" alt="Title" width="100%">
-	
+	<div class="align-right"> 
+		<a href="austinFoodTourDark.jsp">Dark Mode</a>
+	</div>
 <%
     String bloggerName = request.getParameter("bloggerName");
-	
 
     if (bloggerName == null) {
         bloggerName = "Austin Food Tour";
@@ -46,13 +45,13 @@
     pageContext.setAttribute("bloggerName", bloggerName);
     UserService userService = UserServiceFactory.getUserService();
     User user = userService.getCurrentUser();
-	String emailAddr = "test@example.com";
-	String emailToSub = "";
-	String emailToUnSub = "";
+	String emailAddr = "";
     
     if (user != null) {
       pageContext.setAttribute("user", user);
       emailAddr = user.getEmail();
+      pageContext.setAttribute("emailAddr", emailAddr);
+      
 %>
 		<p>Hello, ${fn:escapeXml(user.nickname)}! (You can 
 		<a href="<%= userService.createLogoutURL(request.getRequestURI()) %>">sign out</a>.)</p>
@@ -65,79 +64,27 @@
 <%
     }
 %>
-
-	<div>
-		<button onclick="popUpEmailSubPrompt()">Subscribe</button>
-		<button onclick="popUpEmailUnsubPrompt()">Unsubscribe</button>
-		<p id="sub"></p>
-	</div>
-	
-	<script>
-		function popUpEmailSubPrompt() {
-		  var txt = "Please enter your email address again!";
-		  var emailAddr = "test@example.com";
-		  var emailAddress = prompt("You will receive an email at 5pm central time everyday" + 
-				  "\nif there are any new posts in the past 24 hours" +
-				  "\nPlease enter your email address to subcribe:", emailAddr);
-		  if (emailAddress == null || emailAddress == "") {
-
-		  } else {
-		    txt = emailAddress + " is subscribed!";
-		    emailToSub = emailAddress;
-		    pageContext.setAttribute("emailToSub", emailToSub);
-		  }
-		  document.getElementById("sub").innerHTML = txt;
-		  window.location.replace("austinFoodTourAll.jsp");
-		}
-	</script>
-	<script>
-		function popUpEmailUnsubPrompt() {
-		  var txt = "Please enter your email address again!";
-		  var emailAddress = prompt("Please enter your email address to unsubscribe:", emailAddr);
-		  if (emailAddress == null || emailAddress == "") {
-
-		  } else {
-		    txt = "You are successfully unsubscribed if you entered the correct email address.";
-		    emailToUnSub = emailAddress;
-		    pageContext.setAttribute("emailToUnSub",  emailToUnSub);
-		  }
-		  document.getElementById("sub").innerHTML = txt;
-		  location.reload();
-		}
-	</script>
-	
-	<% 
-	if (emailToSub != "" && emailToSub != null) {
-			
-	%>
+	<p style="font-size:12px">If you want to subscribe, please make sure to log in with your google account first. 
+								\nIf you subscribe, we'll send you an email to your gmail address at 5pm central time everday, 
+								\nif there were new posts in the past 24 hours.</p> 
 		    <div>
 				<form action="/send" method="post">
-					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailToSub)}"/>
+					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailAddr)}"/>
 					<input type="hidden" name="purpose" value="toSub"/>
+					<input type="submit" value="Subscribe"></input>
 				</form>
-			</div>
-	<%
-		emailToSub = "";
-	}
-	%>
-	
-		<% 
-	if (emailToUnSub != "" && emailToUnSub != null) {
-			
-	%>
-		    <div>
+
 				<form action="/send" method="post">
-					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailToUnSub)}"/>
+					<input type="hidden" name="emailAddress" value="${fn:escapeXml(emailAddr)}"/>
 					<input type="hidden" name="purpose" value="toUnSub"/>
+					<input type="submit" value="Unsubscribe"></input>
 				</form>
 			</div>
-	<%
-		emailToUnSub = "";
-	}
-	%>
-	<form action="/send" method="get">
+			
+<!--  	<form action="/send" method="get">
 			<input type="submit" value="Send"></input>
-	</form> 
+	</form> -->
+	
 	<p style="text-align:center;"><img src="taco1.png" alt="Taco" width="300" height="200" alt="centered image"></p> 
 
 <%
@@ -152,17 +99,18 @@
     
     if (posts.isEmpty()) {
         %>
-        <p>Blog '${fn:escapeXml(bloggerName)}' has no posts.</p>
+        <div class="left50"><p>Blog '${fn:escapeXml(bloggerName)}' has no posts.</p></div>
         <%
 
     } else {
         %>
-        <p>Posts in Blog '${fn:escapeXml(bloggerName)}'.</p>
+        <div class="left50"> <p>Posts in Blog '${fn:escapeXml(bloggerName)}'.</p> </div>
         <%
         for (Entity post : posts) {
             pageContext.setAttribute("post_content", post.getProperty("content"));
             pageContext.setAttribute("post_title", post.getProperty("title"));
             pageContext.setAttribute("post_date", post.getProperty("date"));
+            pageContext.setAttribute("post_picture", post.getProperty("picture"));
 
             if (post.getProperty("user") == null) {
 
@@ -194,6 +142,7 @@
 				<div><textarea name="content" rows="4" cols="80"></textarea></div>
 				<div><input type="submit" value="Post" /></div>
 				<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
+				<input type="hidden" name="pageName" value="austinFoodTour.jsp"/>
 			</form>
 		</div>
 	<%} %>

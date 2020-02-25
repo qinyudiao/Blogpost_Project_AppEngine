@@ -8,6 +8,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +33,7 @@ public class WriteBlogpostServlet extends HttpServlet {
         // Guestbook should be limited to ~1/second.
 
         String bloggerName = req.getParameter("bloggerName");
+        String pageName = req.getParameter("pageName");
         Key blogKey = KeyFactory.createKey("Blog", bloggerName);
         
         String title = req.getParameter("title");
@@ -46,7 +49,8 @@ public class WriteBlogpostServlet extends HttpServlet {
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(post);
-        resp.sendRedirect("/austinFoodTour.jsp?bloggerName=" + bloggerName);
+        
+        resp.sendRedirect("/" + pageName + "?bloggerName=" + bloggerName);
 
     }
 }

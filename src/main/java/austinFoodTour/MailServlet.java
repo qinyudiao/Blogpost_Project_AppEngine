@@ -29,8 +29,7 @@ public class MailServlet extends HttpServlet {
         String bloggerName = "Austin Food Tour";
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key emailKey = KeyFactory.createKey("Email", "Email1");
-        Query query_email = new Query("Email", emailKey);
+        Query query_email = new Query("EmailAddress");
         List<Entity> emails = datastore.prepare(query_email).asList(FetchOptions.Builder.withLimit(1000));
         
         Set<String> set_recepients = new HashSet<String>(); 
@@ -51,10 +50,27 @@ public class MailServlet extends HttpServlet {
   
         for (String x : recepients) 
             System.out.println("one of recepients:" + x);
-        
-		try {
+          
+		try {		
 			//if there's update, send the emails
-			JavaMailUtil.sendMail(recepients);
+			Date a_day_ago = new Date(System.currentTimeMillis() - 24 * 3600 * 1000);;
+	        Query query_thread = new Query("Thread");
+	        List<Entity> threads = datastore.prepare(query_thread).asList(FetchOptions.Builder.withLimit(1000));
+	        List<String> titles = new ArrayList<>();
+	        //titles.add("lol");
+	        for (Entity thread: threads) {
+	        	if(thread.getProperty("date") != null) {
+	        		//System.out.println("some");
+		        	if(a_day_ago.compareTo((Date) thread.getProperty("date")) <= 0) {
+		        		titles.add((String) thread.getProperty("title"));
+		        	}
+	        	}
+	        	//System.out.println("some out");
+	        }
+	        System.out.print(titles.size());
+	        if(titles.size()>0) {
+	        	JavaMailUtil.sendMail(recepients, titles);
+	        }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -65,22 +81,29 @@ public class MailServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 			
 		String emailAddress = req.getParameter("emailAddress");
-		Key emailKey = KeyFactory.createKey("Email", emailAddress);
-	    
-	    
-	    if(emailAddress != ""  &&  emailAddress != null) {
-		    System.out.println("email: " + emailAddress);
+		System.out.println("email: " + emailAddress);
+	    if(emailAddress != ""  &&  emailAddress != null  &&  emailAddress.length() > 5) {
+	    	Key emailKey = KeyFactory.createKey("recepient", emailAddress);
+		    
 		    String purpose = req.getParameter("purpose");
 		    System.out.println("purpose: " + purpose);
-		    if(purpose == "toSub") { 
-			    Entity email = new Entity("Email", emailKey);
+		    if(purpose.equals("toSub")) { 
+		    	System.out.println("add to datastore a");
+			    Entity email = new Entity("EmailAddress", emailKey);
 			    email.setProperty("emailAddress", emailAddress);
 			    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 			    datastore.put(email);
+			    System.out.println("add to datastore ");
 		    }
-		    else if(purpose == "toUnSub") {
-			    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-			    datastore.delete(emailKey);
+		    else if(purpose.equals("toUnSub")) {
+		    	DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		        Query query_email = new Query("EmailAddress");
+		        List<Entity> emails = datastore.prepare(query_email).asList(FetchOptions.Builder.withLimit(1000));
+		        for (Entity email: emails) {
+		        	if(email.getProperty("emailAddress").equals(emailAddress))
+		        		datastore.delete(email.getKey());
+		        }
+			    
 		    }
 	    }
 	    

@@ -15,8 +15,11 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-		<link rel="stylesheet" href="beebyebay.css">
+		<link rel="stylesheet" href="darkmode.css">
 		<style>
+		  #p1{
+		    color : #21ae08;
+		  }
 		  div.left50{
 		  	position: absolute;
 		  	left : 50px;
@@ -32,7 +35,7 @@
   
   <img src="AustinFoodTour_title.jpeg" alt="Title" width="100%">
 	<div class="align-right"> 
-		<a href="austinFoodTourAllDark.jsp">Dark Mode</a>
+		<a href="austinFoodTourAll.jsp">Light Mode</a>
 	</div>
 <%
     String bloggerName = request.getParameter("bloggerName");
@@ -99,7 +102,7 @@
     
     if (posts.isEmpty()) {
         %>
-        <div class="left50"><p>Blog '${fn:escapeXml(bloggerName)}' has no posts.</p></div>
+         <div class="left50"><p>Blog '${fn:escapeXml(bloggerName)}' has no posts.</p></div>
         <%
 
     } else {
@@ -116,13 +119,13 @@
             } else {
                 pageContext.setAttribute("post_user", post.getProperty("user"));
                 %>
-                <h2 style='text-align: center; font-style: italic;
+                <h2 style='text-align: center; color: white; font-style: italic;
                 font-weight: 600; font-family: sans-serif'>${fn:escapeXml(post_title)}</h2>
                 <p style='text-align: center;'><b>Written by ${fn:escapeXml(post_user.nickname)} on 
                 ${fn:escapeXml(post_date)}</b></p>
                 <%
                 %>
-                <blockquote style="border:3px; border-style:solid; border-color:black; padding: 1em;"
+                <blockquote style="border:3px; color: white; border-style:solid; border-color:white; padding: 1em;"
                 >${fn:escapeXml(post_content)}</blockquote>
                 <%
             }
@@ -130,7 +133,7 @@
     }
 %>
 	<div class="left50"> 
-		<a href="austinFoodTour.jsp">Show less</a>
+		<a href="austinFoodTourDark.jsp">Show less</a>
 	</div>
 	<%if (user != null) { %>
 		<div class="left40top30">
@@ -141,7 +144,7 @@
 				<div><textarea name="content" rows="4" cols="80"></textarea></div>
 				<div><input type="submit" value="Post" /></div>
 				<input type="hidden" name="bloggerName" value="${fn:escapeXml(bloggerName)}"/>
-				<input type="hidden" name="pageName" value="austinFoodTourAll.jsp"/>
+				<input type="hidden" name="pageName" value="austinFoodTourAllDark.jsp"/>
 			</form>
 		</div>
 	<%} %>
